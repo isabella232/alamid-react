@@ -52,46 +52,20 @@ describe("react()", function () {
 
         });
 
-        describe(".is", function () {
+        describe(".exists", function () {
 
-            describe(".set", function () {
+            it("should call func everytime the signal's value is neither undefined nor null", function () {
+                react().everytime(signal).exists.then(doSomething);
 
-                it("should call func everytime the signal's value is neither undefined nor null", function () {
-                    react().everytime(signal).is.set.then(doSomething);
+                signal.trigger();
+                signal.trigger();
+                signal.value = true;
+                signal.trigger();
+                signal.trigger();
+                signal.value = undefined;
+                signal.trigger();
 
-                    signal.trigger();
-                    signal.trigger();
-                    signal.value = true;
-                    signal.trigger();
-                    signal.trigger();
-                    signal.value = undefined;
-                    signal.trigger();
-
-                    expect(doSomething).to.have.been.calledTwice;
-                });
-
-            });
-
-            describe(".not", function () {
-
-                describe(".set", function () {
-
-                    it("should call func everytime the signal's value is either undefined or null", function () {
-                        react().everytime(signal).is.not.set.then(doSomething);
-
-                        signal.trigger();
-                        signal.trigger();
-                        signal.value = true;
-                        signal.trigger();
-                        signal.trigger();
-                        signal.value = undefined;
-                        signal.trigger();
-
-                        expect(doSomething).to.have.been.calledThrice;
-                    });
-
-                });
-
+                expect(doSomething).to.have.been.calledTwice;
             });
 
         });
@@ -121,6 +95,57 @@ describe("react()", function () {
 
         });
 
+        describe(".does", function () {
+
+            describe(".not", function () {
+
+                describe(".exist", function () {
+
+                    it("should call func everytime the signal's value is either undefined or null", function () {
+                        react().everytime(signal).does.not.exist.then(doSomething);
+
+                        signal.trigger();
+                        signal.trigger();
+                        signal.value = true;
+                        signal.trigger();
+                        signal.trigger();
+                        signal.value = undefined;
+                        signal.trigger();
+
+                        expect(doSomething).to.have.been.calledThrice;
+                    });
+
+                });
+
+                describe(".equal(value)", function () {
+
+                    describe(".then(func)", function () {
+
+                        it("should call func everytime the signal's value strictly does not equal the given value", function () {
+                            var doSomething = sinon.spy();
+
+                            react().everytime(signal).does.not.equal("1").then(doSomething);
+
+                            signal.value = 1;
+                            signal.trigger();
+                            signal.trigger();
+                            signal.value = "1";
+                            signal.trigger();
+                            signal.trigger();
+                            signal.value = 1;
+                            signal.trigger();
+
+                            expect(doSomething).to.have.been.calledThrice;
+                        });
+
+                    });
+
+                });
+
+            });
+
+        });
+
     });
 
     describe(".once(signal)", function () {
@@ -143,64 +168,25 @@ describe("react()", function () {
 
         });
 
-        describe(".is", function () {
+        describe(".exists", function () {
 
-            describe(".set", function () {
+            describe(".then(func)", function () {
 
-                describe(".then(func)", function () {
+                it("should call func whenever the signal's value changes from null/undefined to something other", function () {
+                    react().once(signal).exists.then(doSomething);
 
-                    it("should call func only the first time the signal's value changes from null/undefined to something other", function () {
-                        react().once(signal).is.set.then(doSomething);
+                    signal.trigger();
+                    signal.trigger();
+                    signal.value = true;
+                    signal.trigger();
+                    signal.trigger();
+                    signal.value = undefined;
+                    signal.trigger();
+                    signal.value = true;
+                    signal.trigger();
+                    signal.trigger();
 
-                        signal.trigger();
-                        signal.trigger();
-                        signal.value = true;
-                        signal.trigger();
-                        signal.trigger();
-                        signal.value = undefined;
-                        signal.trigger();
-                        signal.value = true;
-                        signal.trigger();
-                        signal.trigger();
-
-                        expect(doSomething).to.have.been.calledOnce;
-                    });
-
-                    it("should remove the listener after the condition turned true", function () {
-                        signal.unnotify = sinon.spy();
-                        react().once(signal).is.set.then(doSomething);
-
-                        signal.value = true;
-                        signal.trigger();
-
-                        expect(signal.unnotify).to.have.been.called;
-                    });
-
-                });
-
-                describe(".again", function () {
-
-                    describe(".then(func)", function () {
-
-                        it("should call func whenever the signal's value changes from null/undefined to something other", function () {
-                            react().once(signal).is.set.again.then(doSomething);
-
-                            signal.trigger();
-                            signal.trigger();
-                            signal.value = true;
-                            signal.trigger();
-                            signal.trigger();
-                            signal.value = undefined;
-                            signal.trigger();
-                            signal.value = true;
-                            signal.trigger();
-                            signal.trigger();
-
-                            expect(doSomething).to.have.been.calledTwice;
-                        });
-
-                    });
-
+                    expect(doSomething).to.have.been.calledTwice;
                 });
 
             });
@@ -211,9 +197,86 @@ describe("react()", function () {
 
             describe(".then(func)", function () {
 
-                it("should call func only the first time the signal's value strictly equals the given value", function () {
-                    var doSomething = sinon.spy();
+                it("should call func whenever the signal's value strictly equals the given value again", function () {
+                    react().once(signal).equals("1").then(doSomething);
 
+                    signal.value = "1";
+                    signal.trigger();
+                    signal.trigger();
+                    signal.value = 1;
+                    signal.trigger();
+                    signal.trigger();
+                    signal.value = "1";
+                    signal.trigger();
+
+                    expect(doSomething).to.have.been.calledTwice;
+                });
+
+            });
+
+        });
+
+        describe(".does", function () {
+
+            describe(".not", function () {
+
+                describe(".exist", function () {
+
+                    it("should call func whenever the signal's value turned to either undefined or null", function () {
+                        react().once(signal).does.not.exist.then(doSomething);
+
+                        signal.value = true;
+                        signal.trigger();
+                        signal.trigger();
+                        signal.value = undefined;
+                        signal.trigger();
+                        signal.trigger();
+
+                        expect(doSomething).to.have.been.calledOnce;
+                    });
+
+                });
+
+                describe(".equal(value)", function () {
+
+                    describe(".then(func)", function () {
+
+                        it("should call func only the first time the signal's value strictly does not equal the given value", function () {
+                            var doSomething = sinon.spy();
+
+                            react().once(signal).does.not.equal("1").then(doSomething);
+
+                            signal.value = 1;
+                            signal.trigger();
+                            signal.trigger();
+                            signal.value = "1";
+                            signal.trigger();
+                            signal.trigger();
+                            signal.value = 1;
+                            signal.trigger();
+
+                            expect(doSomething).to.have.been.calledThrice;
+                        });
+
+                    });
+
+                });
+
+            });
+
+        });
+
+    });
+
+    describe(".firsttime(signal)", function () {
+
+        return;
+
+        describe(".equals(value)", function () {
+
+            describe(".then(func)", function () {
+
+                it("should call func only the first time the signal's value strictly equals the given value", function () {
                     react().once(signal).equals("1").then(doSomething);
 
                     signal.value = "1";
@@ -230,7 +293,8 @@ describe("react()", function () {
 
                 it("should remove the listener after the condition turned true", function () {
                     signal.unnotify = sinon.spy();
-                    react().once(signal).is.equals("1").then(doSomething);
+
+                    react().once(signal).equals("1").then(doSomething);
 
                     signal.value = "1";
                     signal.trigger();
@@ -240,27 +304,37 @@ describe("react()", function () {
 
             });
 
-            describe(".again", function () {
+        });
 
-                describe(".then(func)", function () {
+        describe(".exists", function () {
 
-                    it("should call func whenever the signal's value strictly equals the given value again", function () {
-                        var doSomething = sinon.spy();
+            describe(".then(func)", function () {
 
-                        react().once(signal).equals("1").again.then(doSomething);
+                it("should call func only the first time the signal's value changes from null/undefined to something other", function () {
+                    react().once(signal).exists.then(doSomething);
 
-                        signal.value = "1";
-                        signal.trigger();
-                        signal.trigger();
-                        signal.value = 1;
-                        signal.trigger();
-                        signal.trigger();
-                        signal.value = "1";
-                        signal.trigger();
+                    signal.trigger();
+                    signal.trigger();
+                    signal.value = true;
+                    signal.trigger();
+                    signal.trigger();
+                    signal.value = undefined;
+                    signal.trigger();
+                    signal.value = true;
+                    signal.trigger();
+                    signal.trigger();
 
-                        expect(doSomething).to.have.been.calledTwice;
-                    });
+                    expect(doSomething).to.have.been.calledOnce;
+                });
 
+                it("should remove the listener after the condition turned true", function () {
+                    signal.unnotify = sinon.spy();
+                    react().once(signal).exists.then(doSomething);
+
+                    signal.value = true;
+                    signal.trigger();
+
+                    expect(signal.unnotify).to.have.been.called;
                 });
 
             });
