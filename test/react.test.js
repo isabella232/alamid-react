@@ -101,82 +101,6 @@ describe("react()", function () {
 
     });
 
-    describe(".when(signal)", function () {
-
-        describe(".changes", function () {
-
-            describe(".then(func)", function () {
-
-                it("should call func only the first time the signal notified about a change", function () {
-                    react().when(signal).changes.then(doSomething);
-
-                    signal.trigger();
-                    signal.trigger();
-                    signal.trigger();
-
-                    expect(doSomething).to.have.been.calledOnce;
-                });
-
-            });
-
-        });
-
-        describe(".is", function () {
-
-            describe(".set", function () {
-
-                describe(".then(func)", function () {
-
-                    it("should call func whenever the signal's value changes from null/undefined to something other", function () {
-                        react().when(signal).is.set.then(doSomething);
-
-                        signal.trigger();
-                        signal.trigger();
-                        signal.value = true;
-                        signal.trigger();
-                        signal.trigger();
-                        signal.value = undefined;
-                        signal.trigger();
-                        signal.value = true;
-                        signal.trigger();
-                        signal.trigger();
-
-                        expect(doSomething).to.have.been.calledTwice;
-                    });
-
-                });
-
-            });
-
-        });
-
-        describe(".equals(value)", function () {
-
-            describe(".then(func)", function () {
-
-                it("should call func whenever the signal's value strictly equals the given value again", function () {
-                    var doSomething = sinon.spy();
-
-                    react().when(signal).equals("1").then(doSomething);
-
-                    signal.value = "1";
-                    signal.trigger();
-                    signal.trigger();
-                    signal.value = 1;
-                    signal.trigger();
-                    signal.trigger();
-                    signal.value = "1";
-                    signal.trigger();
-
-                    expect(doSomething).to.have.been.calledTwice;
-                });
-
-            });
-
-        });
-
-    });
-
     describe(".once(signal)", function () {
 
         describe(".changes", function () {
@@ -184,8 +108,6 @@ describe("react()", function () {
             describe(".then(func)", function () {
 
                 it("should call func only the first time the signal notified about a change", function () {
-                    var doSomething = sinon.spy();
-
                     react().once(signal).changes.then(doSomething);
 
                     signal.trigger();
@@ -234,6 +156,31 @@ describe("react()", function () {
 
                 });
 
+                describe(".again", function () {
+
+                    describe(".then(func)", function () {
+
+                        it("should call func whenever the signal's value changes from null/undefined to something other", function () {
+                            react().once(signal).is.set.again.then(doSomething);
+
+                            signal.trigger();
+                            signal.trigger();
+                            signal.value = true;
+                            signal.trigger();
+                            signal.trigger();
+                            signal.value = undefined;
+                            signal.trigger();
+                            signal.value = true;
+                            signal.trigger();
+                            signal.trigger();
+
+                            expect(doSomething).to.have.been.calledTwice;
+                        });
+
+                    });
+
+                });
+
             });
 
         });
@@ -267,6 +214,31 @@ describe("react()", function () {
                     signal.trigger();
 
                     expect(signal.unnotify).to.have.been.called;
+                });
+
+            });
+
+            describe(".again", function () {
+
+                describe(".then(func)", function () {
+
+                    it("should call func whenever the signal's value strictly equals the given value again", function () {
+                        var doSomething = sinon.spy();
+
+                        react().once(signal).equals("1").again.then(doSomething);
+
+                        signal.value = "1";
+                        signal.trigger();
+                        signal.trigger();
+                        signal.value = 1;
+                        signal.trigger();
+                        signal.trigger();
+                        signal.value = "1";
+                        signal.trigger();
+
+                        expect(doSomething).to.have.been.calledTwice;
+                    });
+
                 });
 
             });
