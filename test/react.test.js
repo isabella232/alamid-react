@@ -54,7 +54,7 @@ describe("react()", function () {
 
         describe(".is", function () {
 
-            describe(".set", function () {
+            describe.only(".set", function () {
 
                 it("should call func everytime the signal's value is neither undefined nor null", function () {
                     react().everytime(signal).is.set.then(doSomething);
