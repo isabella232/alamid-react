@@ -54,7 +54,7 @@ describe("react()", function () {
 
         describe(".is", function () {
 
-            describe.only(".set", function () {
+            describe(".set", function () {
 
                 it("should call func everytime the signal's value is neither undefined nor null", function () {
                     react().everytime(signal).is.set.then(doSomething);
@@ -68,6 +68,28 @@ describe("react()", function () {
                     signal.trigger();
 
                     expect(doSomething).to.have.been.calledTwice;
+                });
+
+            });
+
+            describe(".not", function () {
+
+                describe(".set", function () {
+
+                    it("should call func everytime the signal's value is either undefined or null", function () {
+                        react().everytime(signal).is.not.set.then(doSomething);
+
+                        signal.trigger();
+                        signal.trigger();
+                        signal.value = true;
+                        signal.trigger();
+                        signal.trigger();
+                        signal.value = undefined;
+                        signal.trigger();
+
+                        expect(doSomething).to.have.been.calledThrice;
+                    });
+
                 });
 
             });
