@@ -74,14 +74,14 @@ describe("react()", function () {
 
         });
 
-        /*describe(".equals(value)", function () {
+        describe(".equals(value)", function () {
 
             describe(".then(func)", function () {
 
                 it("should call func everytime the signal's value strictly equals the given value", function () {
                     var doSomething = sinon.spy();
 
-                    react().when(signal).equals("1").then(doSomething);
+                    react().everytime(signal).equals("1").then(doSomething);
 
                     signal.value = "1";
                     signal.trigger();
@@ -97,7 +97,7 @@ describe("react()", function () {
 
             });
 
-        });*/
+        });
 
     });
 
@@ -144,6 +144,31 @@ describe("react()", function () {
                         expect(doSomething).to.have.been.calledTwice;
                     });
 
+                });
+
+            });
+
+        });
+
+        describe(".equals(value)", function () {
+
+            describe(".then(func)", function () {
+
+                it("should call func whenever the signal's value strictly equals the given value again", function () {
+                    var doSomething = sinon.spy();
+
+                    react().when(signal).equals("1").then(doSomething);
+
+                    signal.value = "1";
+                    signal.trigger();
+                    signal.trigger();
+                    signal.value = 1;
+                    signal.trigger();
+                    signal.trigger();
+                    signal.value = "1";
+                    signal.trigger();
+
+                    expect(doSomething).to.have.been.calledTwice;
                 });
 
             });
@@ -207,6 +232,41 @@ describe("react()", function () {
                         expect(signal.unnotify).to.have.been.called;
                     });
 
+                });
+
+            });
+
+        });
+
+        describe(".equals(value)", function () {
+
+            describe(".then(func)", function () {
+
+                it("should call func only the first time the signal's value strictly equals the given value", function () {
+                    var doSomething = sinon.spy();
+
+                    react().once(signal).equals("1").then(doSomething);
+
+                    signal.value = "1";
+                    signal.trigger();
+                    signal.trigger();
+                    signal.value = 1;
+                    signal.trigger();
+                    signal.trigger();
+                    signal.value = "1";
+                    signal.trigger();
+
+                    expect(doSomething).to.have.been.calledOnce;
+                });
+
+                it("should remove the listener after the condition turned true", function () {
+                    signal.unnotify = sinon.spy();
+                    react().once(signal).is.equals("1").then(doSomething);
+
+                    signal.value = "1";
+                    signal.trigger();
+
+                    expect(signal.unnotify).to.have.been.called;
                 });
 
             });
