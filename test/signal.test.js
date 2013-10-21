@@ -7,7 +7,7 @@ var chai = require("chai"),
 
 chai.use(require("sinon-chai"));
 
-describe("react()", function () {
+describe("react() with signal-plugin", function () {
     var signal,
         doSomething;
 
@@ -32,14 +32,18 @@ describe("react()", function () {
         doSomething = sinon.spy();
     });
 
-    describe(".everytime(signal)", function () {
+    before(function () {
+        react.use(require("../plugins/signal.js"));
+    });
+
+    describe(".when(signal)", function () {
 
         describe(".changes", function () {
 
             describe(".then(func)", function () {
 
-                it("should call func everytime the signal changede", function () {
-                    react().everytime(signal).changes.then(doSomething);
+                it("should call func every time the signal changes", function () {
+                    react().when.signal(signal).changes.then(doSomething);
 
                     signal.trigger();
                     signal.trigger();
@@ -54,8 +58,8 @@ describe("react()", function () {
 
         describe(".exists", function () {
 
-            it("should call func everytime the signal's value is neither undefined nor null", function () {
-                react().everytime(signal).exists.then(doSomething);
+            it("should call func every time the signal's value is neither undefined nor null", function () {
+                react().when.signal(signal).exists.then(doSomething);
 
                 signal.trigger();
                 signal.trigger();
@@ -74,10 +78,8 @@ describe("react()", function () {
 
             describe(".then(func)", function () {
 
-                it("should call func everytime the signal's value strictly equals the given value", function () {
-                    var doSomething = sinon.spy();
-
-                    react().everytime(signal).equals("1").then(doSomething);
+                it("should call func every time the signal's value strictly equals the given value", function () {
+                    react().when.signal(signal).equals("1").then(doSomething);
 
                     signal.value = "1";
                     signal.trigger();
@@ -101,8 +103,8 @@ describe("react()", function () {
 
                 describe(".exist", function () {
 
-                    it("should call func everytime the signal's value is either undefined or null", function () {
-                        react().everytime(signal).does.not.exist.then(doSomething);
+                    it("should call func every time the signal's value is either undefined or null", function () {
+                        react().when.signal(signal).does.not.exist.then(doSomething);
 
                         signal.trigger();
                         signal.trigger();
@@ -121,10 +123,10 @@ describe("react()", function () {
 
                     describe(".then(func)", function () {
 
-                        it("should call func everytime the signal's value strictly does not equal the given value", function () {
+                        it("should call func every time the signal's value strictly does not equal the given value", function () {
                             var doSomething = sinon.spy();
 
-                            react().everytime(signal).does.not.equal("1").then(doSomething);
+                            react().when.signal(signal).does.not.equal("1").then(doSomething);
 
                             signal.value = 1;
                             signal.trigger();
@@ -155,7 +157,7 @@ describe("react()", function () {
             describe(".then(func)", function () {
 
                 it("should call func only the first time the signal notified about a change", function () {
-                    react().once(signal).changes.then(doSomething);
+                    react().once.signal(signal).changes.then(doSomething);
 
                     signal.trigger();
                     signal.trigger();
@@ -173,7 +175,7 @@ describe("react()", function () {
             describe(".then(func)", function () {
 
                 it("should call func whenever the signal's value changes from null/undefined to something other", function () {
-                    react().once(signal).exists.then(doSomething);
+                    react().once.signal(signal).exists.then(doSomething);
 
                     signal.trigger();
                     signal.trigger();
@@ -198,7 +200,7 @@ describe("react()", function () {
             describe(".then(func)", function () {
 
                 it("should call func whenever the signal's value strictly equals the given value again", function () {
-                    react().once(signal).equals("1").then(doSomething);
+                    react().once.signal(signal).equals("1").then(doSomething);
 
                     signal.value = "1";
                     signal.trigger();
@@ -223,7 +225,7 @@ describe("react()", function () {
                 describe(".exist", function () {
 
                     it("should call func whenever the signal's value turned to either undefined or null", function () {
-                        react().once(signal).does.not.exist.then(doSomething);
+                        react().once.signal(signal).does.not.exist.then(doSomething);
 
                         signal.value = true;
                         signal.trigger();
@@ -242,7 +244,7 @@ describe("react()", function () {
                     describe(".then(func)", function () {
 
                         it("should call func one time whenever the signal's value strictly does not equal the given value", function () {
-                            react().once(signal).does.not.equal("1").then(doSomething);
+                            react().once.signal(signal).does.not.equal("1").then(doSomething);
 
                             signal.value = 1;
                             signal.trigger();
