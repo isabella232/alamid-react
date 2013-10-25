@@ -43,10 +43,11 @@ describe("react()", function () {
                     react().when(signal).changes.then(doSomething);
 
                     signal.trigger();
+                    signal.value = undefined;
                     signal.trigger();
                     signal.trigger();
 
-                    expect(doSomething).to.have.been.calledThrice;
+                    expect(doSomething).to.have.been.calledTwice;
                 });
 
             });
@@ -155,6 +156,7 @@ describe("react()", function () {
                     react().once(signal).changes.then(doSomething);
 
                     signal.trigger();
+                    signal.value = undefined;
                     signal.trigger();
                     signal.trigger();
 
