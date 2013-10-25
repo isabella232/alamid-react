@@ -5,9 +5,10 @@ var chai = require("chai"),
     react = require("../" + require("../package.json").main),
     expect = chai.expect;
 
+chai.Assertion.includeStack = true;
 chai.use(require("sinon-chai"));
 
-describe("react() with signal-plugin", function () {
+describe("react()", function () {
     var signal,
         doSomething;
 
@@ -103,7 +104,6 @@ describe("react() with signal-plugin", function () {
                         react().when(signal).does.not.exist.then(doSomething);
 
                         signal.trigger();
-                        signal.trigger();
                         signal.value = true;
                         signal.trigger();
                         signal.trigger();
@@ -125,7 +125,6 @@ describe("react() with signal-plugin", function () {
                             react().when(signal).does.not.equal("1").then(doSomething);
 
                             signal.value = 1;
-                            signal.trigger();
                             signal.trigger();
                             signal.value = "1";
                             signal.trigger();
@@ -230,7 +229,7 @@ describe("react() with signal-plugin", function () {
                         signal.trigger();
                         signal.trigger();
 
-                        expect(doSomething).to.have.been.calledOnce;
+                        expect(doSomething).to.have.been.calledTwice;
                     });
 
                 });
@@ -239,7 +238,7 @@ describe("react() with signal-plugin", function () {
 
                     describe(".then(func)", function () {
 
-                        it("should call func one time whenever the signal's value strictly does not equal the given value", function () {
+                        it("should call func one time whenever the signal's value does not equal the given value", function () {
                             react().once(signal).does.not.equal("1").then(doSomething);
 
                             signal.value = 1;
