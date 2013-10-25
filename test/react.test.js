@@ -6,30 +6,37 @@ var chai = require("chai"),
     expect = chai.expect;
 
 chai.Assertion.includeStack = true;
-chai.use(require("sinon-chai"));
+chai.use(require("sinon-chai"))
+
+function createSignal() {
+
+    function signal() {
+        return signal.value;
+    }
+    signal.value = null;
+    signal.listener = null;
+    signal.notify = function (listener) {
+        this.listener = listener;
+    };
+    signal.unnotify = function (listener) {
+        if (this.listener === listener) {
+            delete this.listener;
+        }
+    };
+    signal.trigger = function () {
+        this.listener && this.listener();
+    };
+
+    return signal;
+}
 
 describe("react()", function () {
     var signal,
+        otherSignal,
         doSomething;
 
     beforeEach(function () {
-        signal = function () {
-            return signal.value;
-        };
-        signal.value = null;
-        signal.listener = null;
-        signal.notify = function (listener) {
-            this.listener = listener;
-        };
-        signal.unnotify = function (listener) {
-            if (this.listener === listener) {
-                delete this.listener;
-            }
-        };
-        signal.trigger = function () {
-            this.listener && this.listener();
-        };
-
+        signal = createSignal();
         doSomething = sinon.spy();
     });
 
@@ -95,6 +102,35 @@ describe("react()", function () {
 
         });
 
+        describe(".equals(signal)", function () {
+
+            beforeEach(function () {
+                otherSignal = createSignal();
+            });
+
+            describe(".then(func)", function () {
+
+                it("should call func every time the signal's value strictly equals the other signal's value", function () {
+                    react().when(signal).equals(otherSignal).then(doSomething);
+
+                    signal.value = "1";
+                    signal.trigger();
+                    otherSignal.value = 1;
+                    signal.trigger();
+                    signal.value = 1;
+                    signal.trigger();
+                    signal.value = "1";
+                    signal.trigger();
+                    otherSignal.value = "1";
+                    otherSignal.trigger();
+
+                    expect(doSomething).to.have.been.calledThrice;
+                });
+
+            });
+
+        });
+
         describe(".does", function () {
 
             describe(".not", function () {
@@ -132,6 +168,35 @@ describe("react()", function () {
                             signal.trigger();
                             signal.value = 1;
                             signal.trigger();
+
+                            expect(doSomething).to.have.been.calledThrice;
+                        });
+
+                    });
+
+                });
+
+                describe(".equal(signal)", function () {
+
+                    beforeEach(function () {
+                        otherSignal = createSignal();
+                    });
+
+                    describe(".then(func)", function () {
+
+                        it("should call func every time the signal's value strictly does not equal the other signal's value", function () {
+                            react().when(signal).does.not.equal(otherSignal).then(doSomething);
+
+                            signal.value = "1";
+                            signal.trigger();
+                            otherSignal.value = 1;
+                            signal.trigger();
+                            signal.value = 1;
+                            signal.trigger();
+                            signal.value = "1";
+                            signal.trigger();
+                            otherSignal.value = "1";
+                            otherSignal.trigger();
 
                             expect(doSomething).to.have.been.calledThrice;
                         });
@@ -215,6 +280,32 @@ describe("react()", function () {
 
         });
 
+        describe(".equals(signal)", function () {
+
+            beforeEach(function () {
+                otherSignal = createSignal();
+            });
+
+            describe(".then(func)", function () {
+
+                it("should call func whenever the signal's value strictly equals the given value again", function () {
+                    react().once(signal).equals(otherSignal).then(doSomething);
+
+                    signal.value = 1;
+                    signal.trigger();
+                    signal.trigger();
+                    signal.value = "1";
+                    signal.trigger();
+                    otherSignal.value = "1";
+                    otherSignal.trigger();
+
+                    expect(doSomething).to.have.been.calledTwice;
+                });
+
+            });
+
+        });
+
         describe(".does", function () {
 
             describe(".not", function () {
@@ -253,6 +344,34 @@ describe("react()", function () {
                             signal.trigger();
 
                             expect(doSomething).to.have.been.calledTwice;
+                        });
+
+                    });
+
+                });
+
+                describe(".equal(signal)", function () {
+
+                    beforeEach(function () {
+                        otherSignal = createSignal();
+                    });
+
+                    describe(".then(func)", function () {
+
+                        it("should call func whenever the signal's value strictly does not equal the other signal's value", function () {
+                            react().once(signal).does.not.equal(otherSignal).then(doSomething);
+
+                            otherSignal.trigger();
+                            signal.value = 1;
+                            signal.trigger();
+                            signal.trigger();
+                            signal.value = "1";
+                            signal.trigger();
+                            otherSignal.value = "1";
+                            otherSignal.trigger();
+                            otherSignal.trigger();
+
+                            expect(doSomething).to.have.been.calledOnce;
                         });
 
                     });
