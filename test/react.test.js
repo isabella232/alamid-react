@@ -6,7 +6,7 @@ var chai = require("chai"),
     expect = chai.expect;
 
 chai.Assertion.includeStack = true;
-chai.use(require("sinon-chai"))
+chai.use(require("sinon-chai"));
 
 function createSignal() {
 
@@ -124,7 +124,7 @@ describe("react()", function () {
                     otherSignal.value = "1";
                     otherSignal.trigger();
 
-                    expect(doSomething).to.have.been.calledThrice;
+                    expect(doSomething).to.have.been.calledTwice;
                 });
 
             });
@@ -147,7 +147,7 @@ describe("react()", function () {
                         signal.value = undefined;
                         signal.trigger();
 
-                        expect(doSomething).to.have.been.calledThrice;
+                        expect(doSomething).to.have.been.calledTwice;
                     });
 
                 });
@@ -169,7 +169,7 @@ describe("react()", function () {
                             signal.value = 1;
                             signal.trigger();
 
-                            expect(doSomething).to.have.been.calledThrice;
+                            expect(doSomething).to.have.been.calledTwice;
                         });
 
                     });
@@ -299,7 +299,7 @@ describe("react()", function () {
                     otherSignal.value = "1";
                     otherSignal.trigger();
 
-                    expect(doSomething).to.have.been.calledTwice;
+                    expect(doSomething).to.have.been.calledOnce;
                 });
 
             });
@@ -322,7 +322,7 @@ describe("react()", function () {
                         signal.trigger();
                         signal.trigger();
 
-                        expect(doSomething).to.have.been.calledTwice;
+                        expect(doSomething).to.have.been.calledOnce;
                     });
 
                 });
@@ -378,6 +378,32 @@ describe("react()", function () {
 
                 });
 
+            });
+
+        });
+
+    });
+
+    describe("... .then(func)", function () {
+
+        it("should return the composition", function () {
+            var comp = react().when(signal).changes.then(doSomething);
+
+            expect(comp).to.be.an.instanceof(react.Composition);
+        });
+
+        describe(".now()", function () {
+
+            it("should trigger an initial evaluation", function () {
+                react().when(signal).does.not.exist.then(doSomething).now();
+
+                expect(doSomething).to.have.been.calledOnce;
+            });
+
+            it("should also return the composition", function () {
+                var comp = react().when(signal).changes.then(doSomething).now();
+
+                expect(comp).to.be.an.instanceof(react.Composition);
             });
 
         });
