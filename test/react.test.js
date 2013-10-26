@@ -131,6 +131,60 @@ describe("react()", function () {
 
         });
 
+        describe(".contains(value)", function () {
+
+            describe(".then(func)", function () {
+
+                it("should call func every time the signal's string contains the given string", function () {
+                    react().when(signal).contains("Hello").then(doSomething);
+
+                    signal.trigger();
+                    signal.value = "Hallo";
+                    signal.trigger();
+                    signal.value = "Hello";
+                    signal.trigger();
+                    signal.trigger();
+                    signal.value = "Hallo";
+                    signal.trigger();
+
+                    expect(doSomething).to.have.been.calledTwice;
+                });
+
+                it("should call func every time the signal's array contains the given number", function () {
+                    react().when(signal).contains(4).then(doSomething);
+
+                    signal.trigger();
+                    signal.value = [1, 2, 3];
+                    signal.trigger();
+                    signal.value.push(4);
+                    signal.trigger();
+                    signal.value.push(5);
+                    signal.trigger();
+
+                    expect(doSomething).to.have.been.calledTwice;
+                });
+
+                it("should call func every time the signal's array contains the given signal", function () {
+                    otherSignal = createSignal();
+
+                    react().when(signal).contains(otherSignal).then(doSomething);
+
+                    signal.trigger();
+                    signal.value = [1, 2, 3];
+                    signal.trigger();
+                    signal.value.push(4);
+                    otherSignal.value = 4;
+                    otherSignal.trigger();
+                    signal.value.push(5);
+                    signal.trigger();
+
+                    expect(doSomething).to.have.been.calledTwice;
+                });
+
+            });
+
+        });
+
         describe(".does", function () {
 
             describe(".not", function () {
