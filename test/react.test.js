@@ -213,55 +213,11 @@ describe("react()", function () {
 
     describe(".once(signal)", function () {
 
-        describe(".changes", function () {
-
-            describe(".then(func)", function () {
-
-                it("should call func only the first time the signal notified about a change", function () {
-                    react().once(signal).changes.then(doSomething);
-
-                    signal.trigger();
-                    signal.value = undefined;
-                    signal.trigger();
-                    signal.trigger();
-
-                    expect(doSomething).to.have.been.calledOnce;
-                });
-
-            });
-
-        });
-
-        describe(".exists", function () {
-
-            describe(".then(func)", function () {
-
-                it("should call func whenever the signal's value changes from null/undefined to something other", function () {
-                    react().once(signal).exists.then(doSomething);
-
-                    signal.trigger();
-                    signal.trigger();
-                    signal.value = true;
-                    signal.trigger();
-                    signal.trigger();
-                    signal.value = undefined;
-                    signal.trigger();
-                    signal.value = true;
-                    signal.trigger();
-                    signal.trigger();
-
-                    expect(doSomething).to.have.been.calledTwice;
-                });
-
-            });
-
-        });
-
         describe(".equals(value)", function () {
 
             describe(".then(func)", function () {
 
-                it("should call func whenever the signal's value strictly equals the given value again", function () {
+                it("should call func whenever the signal's value changed from another value to the given value again", function () {
                     react().once(signal).equals("1").then(doSomething);
 
                     signal.value = "1";
@@ -274,108 +230,6 @@ describe("react()", function () {
                     signal.trigger();
 
                     expect(doSomething).to.have.been.calledTwice;
-                });
-
-            });
-
-        });
-
-        describe(".equals(signal)", function () {
-
-            beforeEach(function () {
-                otherSignal = createSignal();
-            });
-
-            describe(".then(func)", function () {
-
-                it("should call func whenever the signal's value strictly equals the given value again", function () {
-                    react().once(signal).equals(otherSignal).then(doSomething);
-
-                    signal.value = 1;
-                    signal.trigger();
-                    signal.trigger();
-                    signal.value = "1";
-                    signal.trigger();
-                    otherSignal.value = "1";
-                    otherSignal.trigger();
-
-                    expect(doSomething).to.have.been.calledOnce;
-                });
-
-            });
-
-        });
-
-        describe(".does", function () {
-
-            describe(".not", function () {
-
-                describe(".exist", function () {
-
-                    it("should call func whenever the signal's value turned to either undefined or null", function () {
-                        react().once(signal).does.not.exist.then(doSomething);
-
-                        signal.value = true;
-                        signal.trigger();
-                        signal.trigger();
-                        signal.value = undefined;
-                        signal.trigger();
-                        signal.trigger();
-
-                        expect(doSomething).to.have.been.calledOnce;
-                    });
-
-                });
-
-                describe(".equal(value)", function () {
-
-                    describe(".then(func)", function () {
-
-                        it("should call func one time whenever the signal's value does not equal the given value", function () {
-                            react().once(signal).does.not.equal("1").then(doSomething);
-
-                            signal.value = 1;
-                            signal.trigger();
-                            signal.trigger();
-                            signal.value = "1";
-                            signal.trigger();
-                            signal.trigger();
-                            signal.value = 1;
-                            signal.trigger();
-
-                            expect(doSomething).to.have.been.calledTwice;
-                        });
-
-                    });
-
-                });
-
-                describe(".equal(signal)", function () {
-
-                    beforeEach(function () {
-                        otherSignal = createSignal();
-                    });
-
-                    describe(".then(func)", function () {
-
-                        it("should call func whenever the signal's value strictly does not equal the other signal's value", function () {
-                            react().once(signal).does.not.equal(otherSignal).then(doSomething);
-
-                            otherSignal.trigger();
-                            signal.value = 1;
-                            signal.trigger();
-                            signal.trigger();
-                            signal.value = "1";
-                            signal.trigger();
-                            otherSignal.value = "1";
-                            otherSignal.trigger();
-                            otherSignal.trigger();
-
-                            expect(doSomething).to.have.been.calledOnce;
-                        });
-
-                    });
-
                 });
 
             });
