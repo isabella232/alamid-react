@@ -79,6 +79,14 @@ describe("react()", function () {
 
         });
 
+        describe(".exist", function () {
+
+            it("should be an alias for exists", function () {
+                expect(react().when(signal).exist).to.equal(react().when(signal).exists);
+            });
+
+        });
+
         describe(".equals(value)", function () {
 
             describe(".then(func)", function () {
@@ -127,6 +135,14 @@ describe("react()", function () {
                     expect(doSomething).to.have.been.calledTwice;
                 });
 
+            });
+
+        });
+
+        describe(".equal", function () {
+
+            it("should be an alias for equals", function () {
+                expect(react().when(signal).equal).to.equal(react().when(signal).equals);
             });
 
         });
@@ -185,32 +201,23 @@ describe("react()", function () {
 
         });
 
+        describe(".contain", function () {
+
+            it("should be an alias for contains", function () {
+                expect(react().when(signal).contain).to.equal(react().when(signal).contains);
+            });
+
+        });
+
         describe(".does", function () {
 
             describe(".not", function () {
-
-                describe(".exist", function () {
-
-                    it("should call func every time the signal's value is either undefined or null", function () {
-                        react().when(signal).does.not.exist.then(doSomething);
-
-                        signal.trigger();
-                        signal.value = true;
-                        signal.trigger();
-                        signal.trigger();
-                        signal.value = undefined;
-                        signal.trigger();
-
-                        expect(doSomething).to.have.been.calledTwice;
-                    });
-
-                });
 
                 describe(".equal(value)", function () {
 
                     describe(".then(func)", function () {
 
-                        it("should call func every time the signal's value strictly does not equal the given value", function () {
+                        it("should call func every time the signal's value does not equal the given value", function () {
                             var doSomething = sinon.spy();
 
                             react().when(signal).does.not.equal("1").then(doSomething);
@@ -224,35 +231,6 @@ describe("react()", function () {
                             signal.trigger();
 
                             expect(doSomething).to.have.been.calledTwice;
-                        });
-
-                    });
-
-                });
-
-                describe(".equal(signal)", function () {
-
-                    beforeEach(function () {
-                        otherSignal = createSignal();
-                    });
-
-                    describe(".then(func)", function () {
-
-                        it("should call func every time the signal's value strictly does not equal the other signal's value", function () {
-                            react().when(signal).does.not.equal(otherSignal).then(doSomething);
-
-                            signal.value = "1";
-                            signal.trigger();
-                            otherSignal.value = 1;
-                            signal.trigger();
-                            signal.value = 1;
-                            signal.trigger();
-                            signal.value = "1";
-                            signal.trigger();
-                            otherSignal.value = "1";
-                            otherSignal.trigger();
-
-                            expect(doSomething).to.have.been.calledThrice;
                         });
 
                     });
